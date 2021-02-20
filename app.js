@@ -14,31 +14,31 @@ app.use(cors())
 const Route = require("./api/routes/route")
 app.use(Route)
 
-// const server = http.createServer(app)
-// const io = socketio(server)
+const server = http.createServer(app)
+const io = socketio(server)
 
-// io.on('connection', (socket) => {
-//     console.log('User connected')
+io.on('connection', (socket) => {
+    console.log('User connected')
 
-//     // Join
-//     socket.on("join", (data) => {
-//         socket.join(data.room)
-//         socket.emit('message', { message: `Welcome ${data.name} to room no ${data.room}` })
-//     })
+    // Join
+    socket.on("join", (data) => {
+        socket.join(data.room)
+        socket.emit('message', { message: `Welcome ${data.name} to room no ${data.room}` })
+    })
 
-//     // Messages
-//     socket.on('message', (data) => {
-//         socket.broadcast.to(data.room).emit("message", { message: data.message })
-//     })
+    // Messages
+    socket.on('message', (data) => {
+        socket.broadcast.to(data.room).emit("message", { message: data.message })
+    })
 
 
-//     socket.on('disconnect', () => {
-//         console.log('User disconnected')
-//     })
-// })
+    socket.on('disconnect', () => {
+        console.log('User disconnected')
+    })
+})
 
 // App Port
 const port = process.env.PORT || 4000
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`App running on ${port} port`)
 })
