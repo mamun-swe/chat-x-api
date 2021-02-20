@@ -1,6 +1,6 @@
 const express = require("express")
-const cors = require("cors")
 const http = require("http")
+const cors = require("cors")
 const morgan = require("morgan")
 const socketio = require("socket.io")
 const bodyParser = require("body-parser")
@@ -9,15 +9,13 @@ const app = express()
 app.use(morgan('dev'))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-app.use(cors)
+app.use(cors())
+
+const Route = require("./api/routes/route")
+app.use(Route)
 
 const server = http.createServer(app)
 const io = socketio(server)
-
-
-app.get('/', (req, res) => {
-    res.json('I am alive')
-})
 
 io.on('connection', (socket) => {
     console.log('User connected')
@@ -39,11 +37,8 @@ io.on('connection', (socket) => {
     })
 })
 
-
-
-
 // App Port
-const PORT = process.env.PORT || 4000;
-server.listen(PORT, () => {
-    console.log(`server running on ${PORT}`);
-});
+const port = process.env.PORT || 4000
+server.listen(port, () => {
+    console.log(`App running on ${port} port`)
+})
