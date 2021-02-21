@@ -16,9 +16,11 @@ app.get('/', (req, res) => res.send('Bad request'))
 
 // Main Routes
 const authRoute = require('./api/routes/auth')
+const userRoute = require('./api/routes/user')
 
 // API URL's
 app.use('/api/v1/auth', authRoute)
+app.use('/api/v1/user', userRoute)
 
 const server = http.createServer(app)
 const io = socketio(server)
