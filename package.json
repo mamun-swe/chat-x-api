@@ -19,6 +19,7 @@
     "mongoose": "^5.11.17",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.4",
-    "socket.io": "^3.0.3"
+    "socket.io": "^3.0.3",
+    "validator": "^13.5.2"
   }
 }

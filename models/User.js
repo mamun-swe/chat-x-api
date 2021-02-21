@@ -6,11 +6,11 @@ const validateEmail = function (email) {
 }
 
 const userSchema = new Schema({
-    username: {
+    userName: {
         type: String,
         trim: true,
         maxlength: 50,
-       required: true
+        required: true
     },
     email: {
         type: String,

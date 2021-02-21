@@ -1,11 +1,19 @@
 const User = require('../../models/User')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
+const validation = require('../validator/AuthValidation')
 
 // Register Account
 const Register = async (req, res, next) => {
     try {
         const { userName, email, password } = req.body
+
+        // validate check
+        const validate = await validation.RegisterValidation({ userName, email, password })
+        if (!validate.isValid) {
+            return res.status(400).json(validate.error)
+        }
+
         const check = await User.findOne({ email: email }).exec()
 
         if (check)
@@ -41,6 +49,12 @@ const Register = async (req, res, next) => {
 const Login = async (req, res, next) => {
     try {
         const { email, password } = req.body
+
+        // validate check
+        const validate = await validation.LoginValidation({ email, password })
+        if (!validate.isValid) {
+            return res.status(400).json(validate.error)
+        }
 
         // Account find using email 
         let account = await User.findOne({ email }).exec()
