@@ -14,7 +14,10 @@ const Index = async (req, res, next) => {
             users: results
         })
     } catch (error) {
-        if (error) next(error)
+        if (error) {
+            console.log(error)
+            next(error)
+        }
     }
 }
 
