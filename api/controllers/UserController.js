@@ -7,7 +7,7 @@ const Index = async (req, res, next) => {
         const token = req.headers.authorization.split(' ')[1]
         const decode = jwt.verify(token, 'SECRET')
 
-        const results = await User.find({ _id: !decode.id }, { userName: 1, email: 1 }).exec()
+        const results = await User.find({ _id: { $not: decode.id } }, { userName: 1, email: 1 }).exec()
 
         res.status(200).json({
             status: true,
