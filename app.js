@@ -25,13 +25,15 @@ app.use('/api/v1/user', userRoute)
 const server = http.createServer(app)
 const io = socketio(server)
 
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
     console.log('User connected')
+
+
 
     // Join
     socket.on('join', (data) => {
-        socket.join(data.room)
-        socket.emit('message', { message: `Welcome ${data.name} to room no ${data.room}` })
+        await socket.join(data.room)
+        await socket.emit('message', { message: `Welcome ${data.name} to room no ${data.room}` })
     })
 
     // Messages
