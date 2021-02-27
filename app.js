@@ -28,10 +28,8 @@ const io = socketio(server)
 io.on('connection', async (socket) => {
     console.log('User connected')
 
-
-
     // Join
-    socket.on('join', (data) => {
+    socket.on('join', async(data) => {
         await socket.join(data.room)
         await socket.emit('message', { message: `Welcome ${data.name} to room no ${data.room}` })
     })
