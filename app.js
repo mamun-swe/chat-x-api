@@ -25,13 +25,24 @@ app.use('/api/v1/user', userRoute)
 const server = http.createServer(app)
 const io = socketio(server)
 
-io.on('connection', async (socket) => {
+let rooms = []
+
+io.on('connection', (socket) => {
     console.log('User connected')
 
     // Join
-    socket.on('join', async(data) => {
-        await socket.join(data.room)
-        await socket.emit('message', { message: `Welcome ${data.name} to room no ${data.room}` })
+    socket.on('join', (data) => {
+
+        // Find room
+        const existRoom = rooms.find((room) => room === data.room)
+        if (!existRoom) {
+            rooms.push(data.room)
+        }
+
+        socket.join(data.room)
+
+        socket.emit('message', { message: `room no ${data.room}` })
+        console.log(rooms)
     })
 
     // Messages
