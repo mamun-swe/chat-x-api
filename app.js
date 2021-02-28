@@ -34,20 +34,30 @@ io.on('connection', (socket) => {
     socket.on('join', (data) => {
 
         // Find room
-        const existRoom = rooms.find((room) => room === data.room)
-        if (!existRoom) {
+        const findRoom = rooms.find((room) =>
+            room.sender === data.room.sender && room.reciver === data.room.reciver ||
+            room.sender === data.room.reciver && room.reciver === data.room.sender
+        )
+
+        if (!findRoom) {
             rooms.push(data.room)
+            socket.join(data.room)
+        } else {
+            socket.join(findRoom)
         }
 
-        socket.join(data.room)
-
-        socket.emit('message', { message: `room no ${data.room}` })
-        console.log(rooms)
+        socket.emit('message', { message: `room no ${data.room.sender} & ${data.room.reciver}` })
     })
 
     // Messages
     socket.on('message', (data) => {
-        socket.broadcast.to(data.room).emit('message', { message: data.message })
+
+        const findRoom = rooms.find((room) =>
+            room.sender === data.sender && room.reciver === data.reciver ||
+            room.sender === data.reciver && room.reciver === data.sender
+        )
+
+        socket.broadcast.to(findRoom).emit('message', { message: data.message })
     })
 
 
