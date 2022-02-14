@@ -5,6 +5,9 @@ const morgan = require('morgan')
 const socketio = require('socket.io')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
+const Messages = require('./models/Message')
+const MessageController = require('./api/controllers/MessageController')
+
 
 const app = express()
 app.use(morgan('dev'))
@@ -31,7 +34,7 @@ io.on('connection', (socket) => {
     console.log('User connected')
 
     // Join
-    socket.on('join', (data) => {
+    socket.on('join', async (data) => {
 
         // Find room
         const findRoom = rooms.find((room) =>
@@ -46,10 +49,17 @@ io.on('connection', (socket) => {
             socket.join(findRoom)
         }
 
-        socket.emit('message', { message: `room no ${data.room.sender} & ${data.room.reciver}` })
+        let messages = MessageController.GetMessage(data)
+
+        messages.then(function (result) {
+            socket.emit('message', { message: result })
+        })
+
+
+
     })
 
-    // Messages
+    // Send Messages
     socket.on('message', (data) => {
 
         const findRoom = rooms.find((room) =>
@@ -57,8 +67,48 @@ io.on('connection', (socket) => {
             room.sender === data.reciver && room.reciver === data.sender
         )
 
-        socket.broadcast.to(findRoom).emit('message', { message: data.message })
+        socket.broadcast.to(findRoom).emit('message', { message: data })
+        MessageController.SendMessage(data)
+
     })
+
+    // // Get Messages
+    // socket.on("getmessage", async ({ sender, reciver }, callback) => {
+    //     try {
+
+    //         const senderA = mongoose.Types.ObjectId(sender)
+    //         const reciverA = mongoose.Types.ObjectId(reciver)
+
+    //         let final = []
+
+    //         // Result for A user
+    //         let result1 = await Messages.find({ $and: [{ sender: senderA }, { reciver: reciverA }] }, { _id: 0 })
+
+    //         // Result for B user
+    //         let result2 = await Messages.find({ $and: [{ sender: reciverA }, { reciver: senderA }] }, { _id: 0 })
+
+    //         for (let index = 0; index < result1.length; index++) {
+    //             const element = result1[index];
+    //             final.push(element)
+    //         }
+
+    //         for (let index = 0; index < result2.length; index++) {
+    //             const element = result2[index];
+    //             final.push(element)
+    //         }
+
+    //         // Sort by date
+    //         final.sort(function (a, b) {
+    //             return new Date(a.createdAt) - new Date(b.createdAt);
+    //         });
+
+    //         callback(final);
+
+    //     } catch (e) {
+    //         console.error(e);
+    //     }
+    // });
+
 
 
     socket.on('disconnect', () => {
