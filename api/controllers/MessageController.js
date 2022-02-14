@@ -28,6 +28,7 @@ const GetMessage = async (data) => {
         messages.sort(function (a, b) {
             return new Date(a.createdAt) - new Date(b.createdAt);
         })
+        
 
         return messages
 
